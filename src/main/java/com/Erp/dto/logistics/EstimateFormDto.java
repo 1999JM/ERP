@@ -48,7 +48,7 @@ public class EstimateFormDto extends DistributionEntity {
         String prName = "";
         if (estimate.getEstimateDetail().size() > 1){   //상품이 여러개 일경우
             prName = estimate.getEstimateDetail().get(0).getProduct().getPrName() +
-                    " 외"+estimate.getEstimateDetail().size()+"개";
+                    " 외"+(estimate.getEstimateDetail().size() - 1)+"개";
         }else{
             prName = estimate.getEstimateDetail().get(0).getProduct().getPrName();
         }

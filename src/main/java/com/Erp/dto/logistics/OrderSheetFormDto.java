@@ -51,7 +51,7 @@ public class OrderSheetFormDto extends DistributionEntity {
         String prName = "";
         if (orderSheet.getOrderSheetDetails().size() > 1){   //상품이 여러개 일경우
             prName = orderSheet.getEstimate().getEstimateDetail().get(0).getProduct().getPrName() +
-                    " 외"+orderSheet.getOrderSheetDetails().size()+"개";
+                    " 외"+(orderSheet.getOrderSheetDetails().size() - 1)+"개";
         }else{
             prName = orderSheet.getEstimate().getEstimateDetail().get(0).getProduct().getPrName();
         }
