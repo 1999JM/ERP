@@ -96,7 +96,7 @@ KOSMO 웹 기반 ERP 프로젝트
 | | | 데이터 분석 | 재무상태표, 손익계산서 데이터 차트 |
 *****
 ## 4. 출력 화면
-* [ERP프로젝트 최종.pdf](https://github.com/scok/Erp-Web/blob/master/ERP%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EC%B5%9C%EC%A2%85.pdf)
+* [ERP프로젝트 최종.pdf]([https://github.com/scok/Erp-Web/blob/master/ERP%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%20%EC%B5%9C%EC%A2%85.pdf](https://github.com/1999JM/Erp/blob/9483e2f71d5d83f5697e99609e3ba8824e3222b3/3%EC%A1%B0_%EC%B5%9C%EC%A2%85%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(%ED%8D%BC%EC%8A%A4%ED%8A%B8%ED%81%B4%EB%9E%98%EC%8A%A4).pdf)https://github.com/1999JM/Erp/blob/9483e2f71d5d83f5697e99609e3ba8824e3222b3/3%EC%A1%B0_%EC%B5%9C%EC%A2%85%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8(%ED%8D%BC%EC%8A%A4%ED%8A%B8%ED%81%B4%EB%9E%98%EC%8A%A4).pdf)
 
 ## ○ 참고문서
 * [Chart.js](https://www.chartjs.org/docs/latest/)
