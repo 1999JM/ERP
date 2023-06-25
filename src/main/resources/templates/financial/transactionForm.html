@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/sidebar}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.2/css/uikit.min.css">
+    <link th:href="@{/css/transaction.css}" rel="stylesheet">
+
+    <th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.23/datatables.min.js"></script>
+    <script type="text/javascript" src=" https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script th:src="@{/js/financial/transactionChart/chartdraw.js}"></script>
+    <script th:src="@{/js/financial/transactionChart/SelectBox.js}"></script>
+    <script th:src="@{/js/financial/transactionDataTable/Transactiontable.js}"></script>
+    </th:block>
+</head>
+
+<body class="bg-gradient-Light">
+<div class="content" layout:fragment="content" >
+    <div class="container2">
+        <div class="card2 shadow mb-4" id="a">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">거래처별 차트</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <!-- 팝업 창-->
+
+                    <div class="dim-layer">
+                        <div class="dimBg"></div>
+                        <div id="layer2" class="pop-layer">
+                            <div class="pop-container">
+                                <div class="pop-conts">
+                                    <!--content //-->
+                                    <h5 class="m-0 font-weight-bold text-primary">거래표
+                                    </h5>
+
+
+                                    <table  id="chartTable">
+
+                                        <div class="pop_selectDiv">
+                                            <select id="select_box03"></select>
+                                            <select id="select_box01" >
+                                                <option></option>
+                                            </select>
+                                            <select id="select_box02"></select>
+                                        </div>
+                                        <tr>
+                                            <td id="Chart01Td">
+                                                <canvas id="myChart4" style="width: 300px; height: 300px;"></canvas>
+                                            </td>
+                                            <td>
+                                                <canvas id="myChart5" style="width: 300px; height: 300px;"></canvas>
+                                            </td>
+                                        </tr>
+
+                                    </table>
+                                    <div class="btn-r">
+                                        <a href="#" class="btn-layerClose">Close</a>
+                                    </div>
+                                    <!--// content-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table id="myTable" class="uk-table uk-table-hover uk-table-striped card-body2" >
+                        <div class="btnDiv">
+                            <button href="#layer2" class="btn-example">차트분석</button>
+                        </div>
+                        <div class="selectboxs">
+
+                            <!--검색 기능 -->
+                            <select id="searchType" class="form-control mr-sm-2">
+                                <option value="0">거래번호</option>
+                                <option value="1">거래처명</option>
+                                <option value="2">거래금액</option>
+                                <option value="3">거래일자</option>
+                                <option value="4">분기</option>
+                                <option value="5">거래분류</option>
+                            </select>
+                            <input class="form-control mr-sm-2" type="search" id="searchValue" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" id="searchBtn" type="button">Search</button>
+                        </div>
+                        <!--데이터 테이블 -->
+                        <thead>
+                        <tr>
+                            <th>거래번호</th>
+                            <th>거래처명</th>
+                            <th>거래금액</th>
+                            <th>거래일자</th>
+                            <th>분기</th>
+                            <th>거래분류</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th colspan="2" style="text-align:right;white-space:nowrap;">TOTAL : </th>
+                            <th colspan="4" style="text-align:left;white-space:nowrap;"></th>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid-container">
+        <div class="card shadow mb-4" id="b">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">입고 거래처 Top5</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="myChartPie" class="myChartPie1"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow mb-4" id="c">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">출고 거래처 Top5</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-area" id="chart01">
+                    <canvas id="myChartPie2" class="myChartPie2" style="width:500px ; height: 500px ;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--카드 end-->
+</div>
+</body>
+</html>

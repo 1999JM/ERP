@@ -1,0 +1,188 @@
+package com.Erp.controller;
+
+import com.Erp.constant.TransactionCategory;
+import com.Erp.dto.TransactionData;
+import com.Erp.dto.TransactionDto;
+import com.Erp.entity.Transaction;
+import com.Erp.repository.TransactionRepository;
+import com.Erp.service.TransactionService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+@Controller
+@RequiredArgsConstructor
+public class TransactionController {
+    private final TransactionService transactionService ;
+    private final TransactionRepository transactionRepository ;
+
+
+    @PostMapping(value = "/transaction/data")
+    @ResponseBody
+    public ResponseEntity<TransactionData> getTransactionData(TransactionData response , @RequestBody MultiValueMap<String, String> formData, @Param("start") int start,@Param("length")  int length) {
+
+        int draw = Integer.parseInt(formData.get("draw").get(0));
+        int num = Integer.parseInt(formData.get("searchType").get(0));
+        String nameParam = formData.get("columns["+num+"][search][value]").get(0);
+        String orderColumnIndexList = formData.get("columnIndex").get(0);
+        String orderDirList = formData.get("orderDir").get(0);
+
+        String orderColumnIndex = orderColumnIndexList != null && !orderColumnIndexList.isEmpty() ? orderColumnIndexList : null;
+        String orderDir = orderDirList != null  ? orderDirList : null;
+
+        int page = start / length ;
+
+        Pageable pageable;
+
+        if (orderColumnIndex != null && orderDir != null) {
+            int columnIndex = Integer.parseInt(orderColumnIndex);
+            Sort.Direction direction = orderDir.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            String columnName = transactionService.getColumnNameByIndex(columnIndex);
+            // 컬럼 인덱스를 컬럼 이름으로 변환하여 사용
+
+            pageable = PageRequest.of(page, length, direction, columnName);
+        } else {
+            pageable = PageRequest.of(page, length);
+        }
+        int total;
+        List<Transaction> data;
+
+        if (nameParam != null && !nameParam.isEmpty()) {
+
+            if(num==0){
+                total = (int) transactionRepository.count();
+                data = transactionRepository.findcompanyNum(nameParam,pageable);
+            }else {
+                total = (int)transactionRepository.countByName(nameParam);
+                data = transactionRepository.findDataByName(nameParam, pageable);
+            }
+        } else {
+            total = (int)transactionRepository.count();
+            data = transactionRepository.findAllData(pageable);
+        }
+
+        response.setDraw(draw);
+        response.setData(data);
+        response.setRecordTotal(total);
+        response.setRecordFiltered(total);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/transaction/select")
+    public @ResponseBody ResponseEntity<List<Transaction>> responseEntity(@RequestParam("transactionCategory") TransactionCategory transactionCategory){
+
+        List<Object[]> transactions = transactionRepository.findDateAndAmount(transactionCategory);
+
+        List<Transaction> transactionList = new ArrayList<>();
+
+        for (Object[] obj: transactions){
+
+            Date trDate = (Date)obj[0];
+            Long amount = (Long)obj[1];
+            String companyNames = (String)obj[2];
+            TransactionCategory transactionCategory1 = (TransactionCategory)obj[3];
+
+            Transaction transaction = new Transaction();
+            transaction.setTrDate(trDate);
+            transaction.setAmount(amount);
+            transaction.setCompanyName(companyNames);
+            transaction.setTransactionCategory(transactionCategory1);
+            transactionList.add(transaction);
+        }
+        return ResponseEntity.ok(transactionList);
+    }
+
+
+    @GetMapping(value = "/transaction/countIn")
+    @ResponseBody
+    public List<Transaction> chartCountIn(){
+        List<Object[]> data = transactionRepository.findTop5CountINS();
+        List<Transaction> transactions = new ArrayList<>() ;
+
+        for (Object[] obj :data){
+            Transaction transaction = new Transaction();
+            String companyName = (String) obj[0];
+            BigInteger count = (BigInteger)obj[1];
+
+            transaction.setCompanyName(companyName);
+            transaction.setAmount(count.longValue());
+
+            transactions.add(transaction);
+        }
+
+        return transactions;
+    }
+
+    @GetMapping(value = "/transaction/countOut")
+    @ResponseBody
+    public List<Transaction> chartCountOut(){
+        List<Object[]> data = transactionRepository.findTop5CountOuts();
+        List<Transaction> transactions = new ArrayList<>() ;
+
+        for (Object[] obj :data){
+            Transaction transaction = new Transaction();
+            String companyName = (String) obj[0];
+            BigInteger count = (BigInteger)obj[1];
+
+            transaction.setCompanyName(companyName);
+            transaction.setAmount(count.longValue());
+            transactions.add(transaction);
+        }
+        return transactions;
+    }
+
+    @GetMapping(value = "/transaction/select")
+    @ResponseBody
+    public  List<Transaction> selectName(){
+        List<Object[]> data = transactionRepository.findSelectName();
+        List<Transaction> transactions = new ArrayList<>();
+
+        for (Object[] obj :data){
+            Transaction transaction = new Transaction() ;
+            String companyname = (String)obj[0];
+            Date trDate = (Date)obj[1];
+            Long amount = (Long)obj[2];
+            TransactionCategory transactionCategory = (TransactionCategory) obj[3];
+
+            transaction.setCompanyName(companyname);
+            transaction.setTrDate(trDate);
+            transaction.setAmount(amount);
+            transaction.setTransactionCategory(transactionCategory);
+            transactions.add(transaction);
+        }
+        return transactions ;
+    }
+
+
+
+    @GetMapping(value = "/transaction/form")
+    public String datatableTran(){
+
+        return "/financial/transactionForm" ;
+    }
+
+    @GetMapping(value = "/transaction/new")
+    public String inTransaction(Model model){
+
+        model.addAttribute("TransactionDto", new TransactionDto());
+        return "/financial/transactionEx" ;
+    }
+
+
+}
