@@ -99,7 +99,7 @@ public class LogisticsController {
         //주문서 코드와 상태를 보내줍니다.
         OrderSheet orderSheet =  orderSheetService.OrderSheetStatusUpdate(data.get("osCode"),data.get("divisionStatus"));
         Section section =sectionService.findBySecCode(data.get("secCode"));
-        int secTotalCount = 0;
+        int secTotalCount = section.getSecTotalCount();
         //창고의 코드와 구역의 정보를 보내줍니다.
         
         for(OrderSheetDetail orderSheetDetail : orderSheet.getOrderSheetDetails()){
@@ -149,11 +149,7 @@ public class LogisticsController {
                     throw new RuntimeException(message);
                 }
             }else if(data.get("divisionStatus").equals("출고")){
-                if(secTotalCount == 0){
-                    secTotalCount = section.getSecTotalCount() - orderSheetDetail.getOsQuantity();
-                }else{
-                    secTotalCount -= orderSheetDetail.getOsQuantity();
-                }
+                secTotalCount -= orderSheetDetail.getOsQuantity();
                 if(orderSheetDetail.getOsQuantity() <= secTotalCount){ //창고의 수량보다 많이 출고 시킬시 감지
                     WarehousingInAndOut warehousingInAndOut = WarehousingInAndOut.of(orderSheet,orderSheetDetail,section,data.get("SACategory"));
                     warehousingInAndOut = logisticsService.WarehousingSave(warehousingInAndOut);
